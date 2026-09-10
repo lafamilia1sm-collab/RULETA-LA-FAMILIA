@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruleta de la Suerte - La Familia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at center, #0f2d26 0%, #061511 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(13, 40, 34, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .unity-button {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            box-shadow: 0 10px 25px rgba(52, 211, 153, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        .unity-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(52, 211, 153, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+        }
+        .unity-button:active {
+            transform: translateY(1px);
+        }
+        .gold-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between min-h-screen p-4">
+
+    <!-- HEADER / LOGO -->
+    <header class="w-full max-w-md flex flex-col items-center py-4">
+        <div class="relative w-32 h-32 md:w-36 md:h-36 rounded-full p-1 bg-gradient-to-tr from-emerald-400 via-teal-300 to-emerald-600 shadow-xl shadow-emerald-900/50 flex items-center justify-center mb-3">
+            <div class="w-full h-full rounded-full bg-[#0a231e] overflow-hidden flex items-center justify-center p-2">
+                <!-- LOGO CON FALLBACK ROBUSTO -->
+                <img src="LOGO LA FAMILIA.jpg" alt="La Familia Logo" class="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]" onerror="this.onerror=null; this.src='LOGO LA FAMILIA.png';">
+            </div>
+        </div>
+        <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-white uppercase text-center drop-shadow-md">
+            La Familia
+        </h1>
+        <p class="text-xs text-emerald-300 font-semibold tracking-widest uppercase mt-1">Servicio y Diagnóstico de Salud</p>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL DE PANTALLAS -->
+    <main class="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
+
+        <!-- 1. PANTALLA DE REGISTRO (INICIO) -->
+        <section id="screen-register" class="glass-panel w-full p-6 rounded-3xl flex flex-col items-center animate-fade-in">
+            <div class="text-center mb-6">
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    🎮 Ruleta de Premios
+                </span>
+                <h2 class="text-xl font-bold text-white mt-3">¡Gira y Gana al Instante!</h2>
+                <p class="text-xs text-slate-300 mt-1">Ingresa tus datos para participar por increíbles premios de salud y bienestar.</p>
+            </div>
+
+            <form id="form-register" class="w-full flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-emerald-300 uppercase mb-1">Nombre Completo</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="reg-name" required placeholder="Ej. Juan Pérez" 
+                            class="w-full pl-10 pr-4 py-3 bg-[#061511]/80 border border-emerald-500/30 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-emerald-300 uppercase mb-1">Número Telefónico / WhatsApp</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-400">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                        <input type="tel" id="reg-phone" required placeholder="Ej. 70000000" 
+                            class="w-full pl-10 pr-4 py-3 bg-[#061511]/80 border border-emerald-500/30 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" class="unity-button w-full py-3.5 rounded-xl font-black text-white text-base uppercase tracking-wider mt-2 flex items-center justify-center gap-2 shadow-lg">
+                    <span>¡Jugar Ahora!</span>
+                    <i class="fa-solid fa-gamepad text-lg"></i>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button onclick="openAdminModal()" class="text-xs text-slate-400 hover:text-emerald-300 underline transition-colors">
+                    <i class="fa-solid fa-lock mr-1"></i> Panel de Administración
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. PANTALLA DE JUEGO (RULETA) -->
+        <section id="screen-game" class="w-full flex flex-col items-center hidden">
+            <div class="text-center mb-3">
+                <p class="text-xs text-slate-300">¡Hola, <span id="player-display-name" class="font-bold text-emerald-300"></span>!</p>
+                <h2 class="text-lg font-black text-white">Gira la Ruleta de la Suerte</h2>
+            </div>
+
+            <!-- CONTENEDOR DE LA RULETA ESTILO UNITY -->
+            <div class="relative w-80 h-80 flex items-center justify-center my-2">
+                <!-- Anillo exterior con brillo y efectos -->
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-300 p-2 shadow-[0_0_35px_rgba(52,211,153,0.5)] animate-pulse">
+                    <div class="w-full h-full rounded-full bg-[#061511]"></div>
+                </div>
+
+                <!-- Puntero Superior Estilo Videojuego -->
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-30 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                    <div class="w-8 h-10 bg-gradient-to-b from-amber-400 to-amber-600 clip-path-pointer flex items-center justify-center border-2 border-white/80 rounded-t-lg shadow-lg">
+                        <div class="w-2 h-2 rounded-full bg-white shadow-inner"></div>
+                    </div>
+                </div>
+
+                <!-- Canvas de la Ruleta -->
+                <canvas id="rouletteCanvas" width="320" height="320" class="relative z-10 cursor-pointer rounded-full drop-shadow-2xl"></canvas>
+
+                <!-- Botón central de la ruleta -->
+                <div onclick="spinWheel()" class="absolute z-20 w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 p-1 shadow-[0_0_15px_rgba(52,211,153,0.8)] flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                    <div class="w-full h-full rounded-full bg-[#0a231e] flex items-center justify-center border-2 border-emerald-300/50">
+                        <span class="text-xs font-black text-emerald-300 tracking-tighter uppercase">GIRAR</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÓN CTA PRINCIPAL -->
+            <button id="spin-btn" onclick="spinWheel()" class="unity-button w-full max-w-xs py-4 rounded-2xl font-black text-white text-lg uppercase tracking-wider mt-4 flex items-center justify-center gap-3 shadow-xl">
+                <i class="fa-solid fa-rotate-right text-xl"></i>
+                <span>¡GIRAR RULETA!</span>
+            </button>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-3 text-[11px] text-slate-500 tracking-wider">
+        LA FAMILIA &copy; 2026 &bull; Todos los derechos reservados
+    </footer>
+
+    <!-- MODAL DE GANADOR -->
+    <div id="winner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+        <div class="glass-panel w-full max-w-sm p-6 rounded-3xl text-center flex flex-col items-center border border-emerald-500/40 shadow-2xl animate-bounce-short">
+            <div class="w-16 h-16 rounded-full gold-badge flex items-center justify-center text-3xl text-slate-900 mb-3 shadow-lg">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3 class="text-2xl font-black text-white">¡Felicidades!</h3>
+            <p class="text-xs text-emerald-300 mt-1 uppercase tracking-wider font-semibold">Te has ganado el siguiente premio:</p>
+            
+            <div class="my-5 w-full py-4 px-3 bg-[#061511]/90 rounded-2xl border border-emerald-400/40 shadow-inner">
+                <span id="winner-prize-text" class="text-xl font-black text-white tracking-wide"></span>
+            </div>
+
+            <div class="flex flex-col gap-3 w-full">
+                <!-- Botón de Girar Nuevamente (RESTAURADO Y VISIBLE) -->
+                <button onclick="resetToGameScreen()" class="unity-button w-full py-3 rounded-xl font-black text-white text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Girar Nuevamente</span>
+                </button>
+
+                <!-- Botón para Compartir por WhatsApp -->
+                <button onclick="shareOnWhatsApp()" class="w-full py-3 rounded-xl font-bold text-white text-sm uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center gap-2 shadow-lg transition-colors">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Compartir por WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ADMINISTRACIÓN -->
+    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+        <div class="glass-panel w-full max-w-lg p-6 rounded-3xl flex flex-col max-h-[90vh] border border-emerald-500/40">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-emerald-500/20">
+                <h3 class="text-lg font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i> Panel de Administración
+                </h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- CONTENIDO LOGIN ADMIN O PANEL -->
+            <div id="admin-login-view" class="flex flex-col gap-4 py-4">
+                <p class="text-xs text-slate-300 text-center">Introduce el PIN de administrador para acceder a la gestión de premios y ganadores.</p>
+                <input type="password" id="admin-pin-input" placeholder="PIN de acceso" maxlength="4"
+                    class="w-full px-4 py-3 bg-[#061511] border border-emerald-500/30 rounded-xl text-white text-center tracking-widest text-lg focus:outline-none focus:border-emerald-400">
+                <button onclick="verifyAdminPin()" class="unity-button w-full py-3 rounded-xl font-black text-white uppercase text-sm">
+                    Ingresar
+                </button>
+            </div>
+
+            <div id="admin-dashboard-view" class="flex flex-col flex-1 overflow-hidden hidden">
+                <!-- Pestañas -->
+                <div class="flex gap-2 mb-4">
+                    <button onclick="switchAdminTab('prizes')" id="tab-prizes-btn" class="flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all">
+                        Premios (8)
+                    </button>
+                    <button onclick="switchAdminTab('winners')" id="tab-winners-btn" class="flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all">
+                        Ganadores
+                    </button>
+                </div>
+
+                <!-- Pestaña 1: Editar Premios -->
+                <div id="admin-tab-prizes" class="flex flex-col gap-3 overflow-y-auto pr-1 flex-1">
+                    <p class="text-[11px] text-slate-300">Modifica los 8 premios de la ruleta en tiempo real:</p>
+                    <div id="prizes-inputs-container" class="flex flex-col gap-2.5">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                    <button onclick="savePrizes()" class="unity-button w-full py-3 rounded-xl font-black text-white text-xs uppercase mt-2">
+                        Guardar Cambios de Premios
+                    </button>
+                </div>
+
+                <!-- Pestaña 2: Lista de Ganadores -->
+                <div id="admin-tab-winners" class="flex flex-col flex-1 overflow-hidden hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-slate-300 font-semibold">Registro de personas premiadas:</span>
+                        <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-excel"></i> Exportar a Excel
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto border border-emerald-500/20 rounded-xl bg-[#061511]/50 p-2">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-emerald-400 border-b border-emerald-500/30">
+                                <tr>
+                                    <th class="p-2">Fecha</th>
+                                    <th class="p-2">Nombre</th>
+                                    <th class="p-2">Teléfono</th>
+                                    <th class="p-2">Premio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="winners-table-body" class="divide-y divide-emerald-500/10 text-slate-200">
+                                <!-- Generado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .clip-path-pointer {
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+        }
+        @keyframes bounceShort {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-short {
+            animation: bounceShort 2s infinite ease-in-out;
+        }
+    </style>
+
+    <script>
+        // ESTADO DE LA APLICACIÓN
+        let prizes = JSON.parse(localStorage.getItem('lafamilia_prizes')) || [
+            "Consulta Gratis",
+            "20% Descuento",
+            "Limpieza Facial",
+            "Perfume Exclusivo",
+            "Perfil Lipídico",
+            "Bono Sorpresa",
+            "Glucosa y Presión",
+            "Membresía VIP"
+        ];
+
+        let winners = JSON.parse(localStorage.getItem('lafamilia_winners')) || [];
+        let currentPlayer = { name: '', phone: '' };
+        let isSpinning = false;
+        let currentAngle = 0;
+        let lastWinnerPrize = '';
+
+        // PALETA PASTEL Y TURQUESA VERDE-AZULADO (Estilo Unity)
+        const sliceColors = [
+            '#2dd4bf', // Turquesa claro
+            '#34d399', // Menta vibrante
+            '#10b981', // Esmeralda suave
+            '#059669', // Verde medio
+            '#14b8a6', // Teal brillante
+            '#20c997', // Verde agua
+            '#0d9488', // Turquesa oscuro
+            '#3ee0b5'  // Menta claro
+        ];
+
+        // INICIALIZACIÓN
+        const canvas = document.getElementById('rouletteCanvas');
+        const ctx = canvas.getContext('2d');
+
+        document.getElementById('form-register').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+
+            if (!name || !phone) return;
+
+            currentPlayer = { name, phone };
+            document.getElementById('player-display-name').textContent = name;
+
+            document.getElementById('screen-register').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            drawRoulette();
+        });
+
+        function drawRoulette(angle = 0) {
+            const numSlices = prizes.length;
+            const arc = (2 * Math.PI) / numSlices;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 6;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle);
+
+            for (let i = 0; i < numSlices; i++) {
+                const startAngle = i * arc;
+                const endAngle = (i + 1) * arc;
+
+                // Sector de la ruleta
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+
+                // Gradiente moderno en cada sector
+                const grad = ctx.createRadialGradient(0, 0, 20, 0, 0, radius);
+                grad.addColorStop(0, '#ffffff22');
+                grad.addColorStop(1, sliceColors[i % sliceColors.length]);
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Borde divisor luminoso
+                ctx.strokeStyle = '#ffffff66';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // TEXTO RADIALMENTE ORIENTADO CON SOMBRA SUTIL (Blanco con sombra negra)
+                ctx.save();
+                const sliceAngle = startAngle + arc / 2;
+                ctx.rotate(sliceAngle);
+                
+                // Configurar fuente grande y legible
+                ctx.font = 'bold 13px "Outfit", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                
+                // Sombra sutil detrás del texto blanco
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+                
+                ctx.fillStyle = '#ffffff';
+                
+                // Escribir texto desde el interior hacia el borde exterior
+                const textX = radius - 22;
+                ctx.fillText(prizes[i], textX, 0);
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('spin-btn').disabled = true;
+
+            const numSlices = prizes.length;
+            const arc = (2 * Math.PI) / numSlices;
+            
+            // Giro aleatorio de 5 a 8 vueltas completas más un ángulo aleatorio
+            const minSpins = 5;
+            const maxSpins = 8;
+            const randomSpins = Math.floor(Math.random() * (maxSpins - minSpins + 1)) + minSpins;
+            const targetAngle = currentAngle + (randomSpins * 2 * Math.PI) + Math.random() * (2 * Math.PI);
+            
+            const spinDuration = 4500; // 4.5 segundos
+            const startTime = performance.now();
+
+            function animateSpin(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / spinDuration, 1);
+                
+                // Easing de desaceleración cúbica (easeOutCubic)
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                
+                currentAngle = currentAngle + (targetAngle - currentAngle) * (progress === 1 ? 1 : (targetAngle - currentAngle > 0 ? 0.05 : 1)); // Suavizado visual
+                // Usamos la fórmula exacta de aceleración
+                const currentAnimatedAngle = currentAngle + (targetAngle - currentAngle) * easeProgress;
+                
+                drawRoulette(currentAnimatedAngle);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    currentAngle = targetAngle % (2 * Math.PI);
+                    isSpinning = false;
+                    document.getElementById('spin-btn').disabled = false;
+                    determineWinner(currentAngle);
+                }
+            }
+
+            requestAnimationFrame(animateSpin);
+        }
+
+        function determineWinner(finalAngle) {
+            const numSlices = prizes.length;
+            const arc = (2 * Math.PI) / numSlices;
+            
+            // El puntero está arriba (en el ángulo -PI/2 o 3PI/2)
+            const normalizedAngle = (2 * Math.PI - (finalAngle % (2 * Math.PI)) - (Math.PI / 2)) % (2 * Math.PI);
+            const winningIndex = Math.floor((normalizedAngle + 2 * Math.PI) % (2 * Math.PI) / arc) % numSlices;
+
+            const winningPrize = prizes[winningIndex];
+            lastWinnerPrize = winningPrize;
+
+            // Registrar ganador
+            const newWinner = {
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                name: currentPlayer.name,
+                phone: currentPlayer.phone,
+                prize: winningPrize
+            };
+
+            winners.unshift(newWinner);
+            localStorage.setItem('lafamilia_winners', JSON.stringify(winners));
+
+            // Mostrar modal de ganador
+            document.getElementById('winner-prize-text').textContent = winningPrize;
+            document.getElementById('winner-modal').classList.remove('hidden');
+        }
+
+        function resetToGameScreen() {
+            document.getElementById('winner-modal').classList.add('hidden');
+            drawRoulette(currentAngle);
+        }
+
+        function shareOnWhatsApp() {
+            const text = `¡Hola! Participé en la ruleta de La Familia Servicio y Diagnóstico de Salud y me gané: *${lastWinnerPrize}*. ¡Excelente experiencia! 🎉`;
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // LÓGICA DE ADMINISTRACIÓN (PIN: 1984)
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            document.getElementById('admin-dashboard-view').classList.add('hidden');
+            document.getElementById('admin-pin-input').value = '';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const pin = document.getElementById('admin-pin-input').value;
+            if (pin === '1984') {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-dashboard-view').classList.remove('hidden');
+                loadAdminPrizesInputs();
+                loadAdminWinnersTable();
+            } else {
+                alert('PIN incorrecto. Intente nuevamente.');
+                document.getElementById('admin-pin-input').value = '';
+            }
+        }
+
+        function switchAdminTab(tab) {
+            const prizesTab = document.getElementById('admin-tab-prizes');
+            const winnersTab = document.getElementById('admin-tab-winners');
+            const prizesBtn = document.getElementById('tab-prizes-btn');
+            const winnersBtn = document.getElementById('tab-winners-btn');
+
+            if (tab === 'prizes') {
+                prizesTab.classList.remove('hidden');
+                winnersTab.classList.add('hidden');
+                prizesBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
+                winnersBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+                loadAdminPrizesInputs();
+            } else {
+                prizesTab.classList.add('hidden');
+                winnersTab.classList.remove('hidden');
+                winnersBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
+                prizesBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+                loadAdminWinnersTable();
+            }
+        }
+
+        function loadAdminPrizesInputs() {
+            const container = document.getElementById('prizes-inputs-container');
+            container.innerHTML = '';
+            prizes.forEach((prize, index) => {
+                container.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-emerald-400 w-6">#${index+1}</span>
+                        <input type="text" id="prize-input-${index}" value="${prize}" 
+                            class="w-full px-3 py-2 bg-[#061511] border border-emerald-500/30 rounded-xl text-white text-xs focus:outline-none focus:border-emerald-400">
+                    </div>
+                `;
+            });
+        }
+
+        function savePrizes() {
+            for (let i = 0; i < 8; i++) {
+                const val = document.getElementById(`prize-input-${i}`).value.trim();
+                if (val) prizes[i] = val;
+            }
+            localStorage.setItem('lafamilia_prizes', JSON.stringify(prizes));
+            drawRoulette(currentAngle);
+            alert('¡Premios actualizados correctamente!');
+        }
+
+        function loadAdminWinnersTable() {
+            const tbody = document.getElementById('winners-table-body');
+            tbody.innerHTML = '';
+            if (winners.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No hay ganadores registrados aún.</td></tr>`;
+                return;
+            }
+            winners.forEach(w => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-emerald-500/5">
+                        <td class="p-2 whitespace-nowrap text-slate-400 text-[10px]">${w.date}</td>
+                        <td class="p-2 font-semibold text-white">${w.name}</td>
+                        <td class="p-2 text-emerald-300">${w.phone}</td>
+                        <td class="p-2 font-bold text-amber-300">${w.prize}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportToExcel() {
+            if (winners.length === 0) {
+                alert('No hay datos de ganadores para exportar.');
+                return;
+            }
+            let csv = 'Fecha,Nombre,Telefono,Premio\n';
+            winners.forEach(w => {
+                csv += `"${w.date}","${w.name}","${w.phone}","${w.prize}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Ganadores_Ruleta_LaFamilia_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Renderizar inicial al cargar
+        window.onload = function() {
+            drawRoulette();
+        };
+    </script>
+</body>
+</html>
