@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -166,7 +168,7 @@
             </div>
 
             <div class="flex flex-col gap-3 w-full">
-                <!-- Botón de Girar Nuevamente (RESTAURADO Y VISIBLE) -->
+                <!-- Botón de Girar Nuevamente -->
                 <button onclick="resetToGameScreen()" class="unity-button w-full py-3 rounded-xl font-black text-white text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg">
                     <i class="fa-solid fa-rotate-right"></i>
                     <span>Girar Nuevamente</span>
@@ -205,19 +207,22 @@
 
             <div id="admin-dashboard-view" class="flex flex-col flex-1 overflow-hidden hidden">
                 <!-- Pestañas -->
-                <div class="flex gap-2 mb-4">
-                    <button onclick="switchAdminTab('prizes')" id="tab-prizes-btn" class="flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all">
-                        Premios (8)
+                <div class="flex gap-1 mb-3">
+                    <button onclick="switchAdminTab('prizes')" id="tab-prizes-btn" class="flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-emerald-500 text-slate-900 transition-all">
+                        Premios
                     </button>
-                    <button onclick="switchAdminTab('winners')" id="tab-winners-btn" class="flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all">
+                    <button onclick="switchAdminTab('winners')" id="tab-winners-btn" class="flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all">
                         Ganadores
+                    </button>
+                    <button onclick="switchAdminTab('cloud')" id="tab-cloud-btn" class="flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all">
+                        Supabase
                     </button>
                 </div>
 
                 <!-- Pestaña 1: Editar Premios -->
                 <div id="admin-tab-prizes" class="flex flex-col gap-3 overflow-y-auto pr-1 flex-1">
-                    <p class="text-[11px] text-slate-300">Modifica los 8 premios de la ruleta en tiempo real:</p>
-                    <div id="prizes-inputs-container" class="flex flex-col gap-2.5">
+                    <p class="text-[11px] text-slate-300">Modifica los 8 premios de la ruleta:</p>
+                    <div id="prizes-inputs-container" class="flex flex-col gap-2">
                         <!-- Generado dinámicamente -->
                     </div>
                     <button onclick="savePrizes()" class="unity-button w-full py-3 rounded-xl font-black text-white text-xs uppercase mt-2">
@@ -228,9 +233,9 @@
                 <!-- Pestaña 2: Lista de Ganadores -->
                 <div id="admin-tab-winners" class="flex flex-col flex-1 overflow-hidden hidden">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs text-slate-300 font-semibold">Registro de personas premiadas:</span>
+                        <span class="text-xs text-slate-300 font-semibold">Registro de premios:</span>
                         <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
-                            <i class="fa-solid fa-file-excel"></i> Exportar a Excel
+                            <i class="fa-solid fa-file-excel"></i> Exportar
                         </button>
                     </div>
                     <div class="flex-1 overflow-y-auto border border-emerald-500/20 rounded-xl bg-[#061511]/50 p-2">
@@ -248,6 +253,24 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- Pestaña 3: Configuración Supabase (Nube Global) -->
+                <div id="admin-tab-cloud" class="flex flex-col gap-3 overflow-y-auto pr-1 flex-1 hidden">
+                    <p class="text-[11px] text-slate-300">Conecta tu base de datos de Supabase para sincronizar premios y ganadores en tiempo real en todos los celulares:</p>
+                    <div>
+                        <label class="block text-[10px] font-bold text-emerald-300 uppercase mb-1">Supabase URL</label>
+                        <input type="text" id="supabase-url-input" placeholder="https://tu-proyecto.supabase.co" 
+                            class="w-full px-3 py-2 bg-[#061511] border border-emerald-500/30 rounded-xl text-white text-xs focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-emerald-300 uppercase mb-1">Supabase Anon Key</label>
+                        <input type="password" id="supabase-key-input" placeholder="eyJhbGciOi..." 
+                            class="w-full px-3 py-2 bg-[#061511] border border-emerald-500/30 rounded-xl text-white text-xs focus:outline-none focus:border-emerald-400">
+                    </div>
+                    <button onclick="saveSupabaseConfig()" class="unity-button w-full py-3 rounded-xl font-black text-white text-xs uppercase mt-2">
+                        Conectar y Sincronizar Nube
+                    </button>
                 </div>
             </div>
         </div>
@@ -267,8 +290,11 @@
     </style>
 
     <script>
-        // ESTADO DE LA APLICACIÓN
-        let prizes = JSON.parse(localStorage.getItem('lafamilia_prizes')) || [
+        // ESTADO DE LA APLICACIÓN Y SUPABASE
+        let supabaseClient = null;
+        let supabaseConfig = JSON.parse(localStorage.getItem('lafamilia_supabase_config')) || { url: '', key: '' };
+
+        let defaultPrizes = [
             "Consulta Gratis",
             "20% Descuento",
             "Limpieza Facial",
@@ -279,6 +305,7 @@
             "Membresía VIP"
         ];
 
+        let prizes = JSON.parse(localStorage.getItem('lafamilia_prizes')) || defaultPrizes;
         let winners = JSON.parse(localStorage.getItem('lafamilia_winners')) || [];
         let currentPlayer = { name: '', phone: '' };
         let isSpinning = false;
@@ -287,19 +314,46 @@
 
         // PALETA PASTEL Y TURQUESA VERDE-AZULADO (Estilo Unity)
         const sliceColors = [
-            '#2dd4bf', // Turquesa claro
-            '#34d399', // Menta vibrante
-            '#10b981', // Esmeralda suave
-            '#059669', // Verde medio
-            '#14b8a6', // Teal brillante
-            '#20c997', // Verde agua
-            '#0d9488', // Turquesa oscuro
-            '#3ee0b5'  // Menta claro
+            '#2dd4bf', '#34d399', '#10b981', '#059669', 
+            '#14b8a6', '#20c997', '#0d9488', '#3ee0b5'
         ];
 
-        // INICIALIZACIÓN
         const canvas = document.getElementById('rouletteCanvas');
         const ctx = canvas.getContext('2d');
+
+        // INICIALIZACIÓN DE SUPABASE SI EXISTEN CREDENCIALES
+        async function initSupabase() {
+            if (supabaseConfig.url && supabaseConfig.key) {
+                try {
+                    supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.key);
+                    await fetchCloudData();
+                } catch (e) {
+                    console.error("Error conectando a Supabase:", e);
+                }
+            }
+        }
+
+        async function fetchCloudData() {
+            if (!supabaseClient) return;
+            try {
+                // Obtener premios de la tabla 'prizes' (asumiendo registro id=1)
+                const { data: prizeData } = await supabaseClient.from('prizes').select('*').eq('id', 1).single();
+                if (prizeData && prizeData.items) {
+                    prizes = prizeData.items;
+                    localStorage.setItem('lafamilia_prizes', JSON.stringify(prizes));
+                    drawRoulette(currentAngle);
+                }
+
+                // Obtener ganadores de la tabla 'winners'
+                const { data: winnerData } = await supabaseClient.from('winners').select('*').order('id', { ascending: false });
+                if (winnerData) {
+                    winners = winnerData;
+                    localStorage.setItem('lafamilia_winners', JSON.stringify(winners));
+                }
+            } catch (err) {
+                console.log("Sincronización en la nube pendiente de tablas configuradas.");
+            }
+        }
 
         document.getElementById('form-register').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -332,48 +386,39 @@
                 const startAngle = i * arc;
                 const endAngle = (i + 1) * arc;
 
-                // Sector de la ruleta
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
                 ctx.arc(0, 0, radius, startAngle, endAngle);
                 ctx.closePath();
 
-                // Gradiente moderno en cada sector
                 const grad = ctx.createRadialGradient(0, 0, 20, 0, 0, radius);
                 grad.addColorStop(0, '#ffffff22');
                 grad.addColorStop(1, sliceColors[i % sliceColors.length]);
                 ctx.fillStyle = grad;
                 ctx.fill();
 
-                // Borde divisor luminoso
                 ctx.strokeStyle = '#ffffff66';
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // TEXTO RADIALMENTE ORIENTADO CON SOMBRA SUTIL (Blanco con sombra negra)
+                // TEXTO RADIALMENTE ORIENTADO CON SOMBRA SUTIL
                 ctx.save();
                 const sliceAngle = startAngle + arc / 2;
                 ctx.rotate(sliceAngle);
                 
-                // Configurar fuente grande y legible
                 ctx.font = 'bold 13px "Outfit", sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
                 
-                // Sombra sutil detrás del texto blanco
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
                 ctx.shadowBlur = 4;
                 ctx.shadowOffsetX = 1;
                 ctx.shadowOffsetY = 1;
                 
                 ctx.fillStyle = '#ffffff';
-                
-                // Escribir texto desde el interior hacia el borde exterior
-                const textX = radius - 22;
-                ctx.fillText(prizes[i], textX, 0);
+                ctx.fillText(prizes[i], radius - 22, 0);
                 ctx.restore();
             }
-
             ctx.restore();
         }
 
@@ -383,28 +428,18 @@
             document.getElementById('spin-btn').disabled = true;
 
             const numSlices = prizes.length;
-            const arc = (2 * Math.PI) / numSlices;
-            
-            // Giro aleatorio de 5 a 8 vueltas completas más un ángulo aleatorio
-            const minSpins = 5;
-            const maxSpins = 8;
-            const randomSpins = Math.floor(Math.random() * (maxSpins - minSpins + 1)) + minSpins;
+            const randomSpins = Math.floor(Math.random() * 4) + 5;
             const targetAngle = currentAngle + (randomSpins * 2 * Math.PI) + Math.random() * (2 * Math.PI);
             
-            const spinDuration = 4500; // 4.5 segundos
+            const spinDuration = 4500;
             const startTime = performance.now();
 
             function animateSpin(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / spinDuration, 1);
-                
-                // Easing de desaceleración cúbica (easeOutCubic)
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
                 
-                currentAngle = currentAngle + (targetAngle - currentAngle) * (progress === 1 ? 1 : (targetAngle - currentAngle > 0 ? 0.05 : 1)); // Suavizado visual
-                // Usamos la fórmula exacta de aceleración
                 const currentAnimatedAngle = currentAngle + (targetAngle - currentAngle) * easeProgress;
-                
                 drawRoulette(currentAnimatedAngle);
 
                 if (progress < 1) {
@@ -416,22 +451,19 @@
                     determineWinner(currentAngle);
                 }
             }
-
             requestAnimationFrame(animateSpin);
         }
 
-        function determineWinner(finalAngle) {
+        async function determineWinner(finalAngle) {
             const numSlices = prizes.length;
             const arc = (2 * Math.PI) / numSlices;
             
-            // El puntero está arriba (en el ángulo -PI/2 o 3PI/2)
             const normalizedAngle = (2 * Math.PI - (finalAngle % (2 * Math.PI)) - (Math.PI / 2)) % (2 * Math.PI);
             const winningIndex = Math.floor((normalizedAngle + 2 * Math.PI) % (2 * Math.PI) / arc) % numSlices;
 
             const winningPrize = prizes[winningIndex];
             lastWinnerPrize = winningPrize;
 
-            // Registrar ganador
             const newWinner = {
                 date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 name: currentPlayer.name,
@@ -442,7 +474,13 @@
             winners.unshift(newWinner);
             localStorage.setItem('lafamilia_winners', JSON.stringify(winners));
 
-            // Mostrar modal de ganador
+            // Sincronizar con Supabase si está activo
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('winners').insert([newWinner]);
+                } catch (e) { console.error("Error al guardar ganador en la nube", e); }
+            }
+
             document.getElementById('winner-prize-text').textContent = winningPrize;
             document.getElementById('winner-modal').classList.remove('hidden');
         }
@@ -458,7 +496,7 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // LÓGICA DE ADMINISTRACIÓN (PIN: 1984)
+        // PANEL DE ADMINISTRACIÓN (PIN: 1984)
         function openAdminModal() {
             document.getElementById('admin-modal').classList.remove('hidden');
             document.getElementById('admin-login-view').classList.remove('hidden');
@@ -477,6 +515,8 @@
                 document.getElementById('admin-dashboard-view').classList.remove('hidden');
                 loadAdminPrizesInputs();
                 loadAdminWinnersTable();
+                document.getElementById('supabase-url-input').value = supabaseConfig.url;
+                document.getElementById('supabase-key-input').value = supabaseConfig.key;
             } else {
                 alert('PIN incorrecto. Intente nuevamente.');
                 document.getElementById('admin-pin-input').value = '';
@@ -486,21 +526,29 @@
         function switchAdminTab(tab) {
             const prizesTab = document.getElementById('admin-tab-prizes');
             const winnersTab = document.getElementById('admin-tab-winners');
+            const cloudTab = document.getElementById('admin-tab-cloud');
             const prizesBtn = document.getElementById('tab-prizes-btn');
             const winnersBtn = document.getElementById('tab-winners-btn');
+            const cloudBtn = document.getElementById('tab-cloud-btn');
+
+            prizesTab.classList.add('hidden');
+            winnersTab.classList.add('hidden');
+            cloudTab.classList.add('hidden');
+            prizesBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+            winnersBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+            cloudBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
 
             if (tab === 'prizes') {
                 prizesTab.classList.remove('hidden');
-                winnersTab.classList.add('hidden');
-                prizesBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
-                winnersBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+                prizesBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
                 loadAdminPrizesInputs();
-            } else {
-                prizesTab.classList.add('hidden');
+            } else if (tab === 'winners') {
                 winnersTab.classList.remove('hidden');
-                winnersBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
-                prizesBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold uppercase bg-[#061511] text-slate-300 border border-emerald-500/30 transition-all";
+                winnersBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
                 loadAdminWinnersTable();
+            } else {
+                cloudTab.classList.remove('hidden');
+                cloudBtn.className = "flex-1 py-2 rounded-xl text-[11px] font-bold uppercase bg-emerald-500 text-slate-900 transition-all";
             }
         }
 
@@ -518,14 +566,20 @@
             });
         }
 
-        function savePrizes() {
+        async function savePrizes() {
             for (let i = 0; i < 8; i++) {
                 const val = document.getElementById(`prize-input-${i}`).value.trim();
                 if (val) prizes[i] = val;
             }
             localStorage.setItem('lafamilia_prizes', JSON.stringify(prizes));
             drawRoulette(currentAngle);
-            alert('¡Premios actualizados correctamente!');
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('prizes').upsert([{ id: 1, items: prizes }]);
+                } catch (e) { console.error("Error guardando premios en nube", e); }
+            }
+            alert('¡Premios actualizados correctamente en todos los dispositivos!');
         }
 
         function loadAdminWinnersTable() {
@@ -547,9 +601,18 @@
             });
         }
 
+        function saveSupabaseConfig() {
+            const url = document.getElementById('supabase-url-input').value.trim();
+            const key = document.getElementById('supabase-key-input').value.trim();
+            supabaseConfig = { url, key };
+            localStorage.setItem('lafamilia_supabase_config', JSON.stringify(supabaseConfig));
+            alert('¡Credenciales guardadas! Reiniciando conexión con Supabase...');
+            initSupabase();
+        }
+
         function exportToExcel() {
             if (winners.length === 0) {
-                alert('No hay datos de ganadores para exportar.');
+                alert('No hay datos para exportar.');
                 return;
             }
             let csv = 'Fecha,Nombre,Telefono,Premio\n';
@@ -567,8 +630,8 @@
             document.body.removeChild(a);
         }
 
-        // Renderizar inicial al cargar
         window.onload = function() {
+            initSupabase();
             drawRoulette();
         };
     </script>
