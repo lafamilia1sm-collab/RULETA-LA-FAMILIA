@@ -215,8 +215,10 @@
                 </div>
 
                 <div id="admin-tab-winners" class="flex flex-col flex-1 overflow-hidden hidden">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs text-slate-300 font-semibold">Registro de premios:</span>
+                    <div class="flex justify-between items-center mb-2 gap-2">
+                        <button onclick="clearAllData()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition-colors">
+                            <i class="fa-solid fa-trash-can"></i> Limpiar Todo (Desde 0)
+                        </button>
                         <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
                             <i class="fa-solid fa-file-excel"></i> Exportar
                         </button>
@@ -260,8 +262,8 @@
         } catch (e) { console.log("Modo local"); }
 
         let defaultPrizes = [
-            "15% Descuento", "10% Descuento", "7% Descuento", "5% Descuento", 
-            "Rebaja Bs. 50", "Rebaja Bs. 40", "Rebaja Bs. 30", "Rebaja Bs. 20"
+            "20% Descuento", "15% Descuento", "10% Descuento", "5% Descuento", 
+            "Rebaja de Bs. 40", "Rebaja de Bs. 30", "Rebaja de Bs. 20", "Rebaja de Bs. 25"
         ];
 
         let prizes = JSON.parse(localStorage.getItem('lafamilia_prizes')) || defaultPrizes;
@@ -530,19 +532,37 @@
                 alert('No hay datos para exportar.');
                 return;
             }
-            let csv = 'Fecha,Nombre,Telefono,Premio\n';
+            // Uso de tabulaciones para forzar separación limpia por columnas en Excel
+            let excelContent = "Fecha\tNombre\tTeléfono\tPremio\n";
             winners.forEach(w => {
-                csv += `"${w.date}","${w.name}","${w.phone}","${w.prize}"\n`;
+                excelContent += `${w.date}\t${w.name}\t${w.phone}\t${w.prize}\n`;
             });
 
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Ganadores_${new Date().toISOString().slice(0,10)}.csv`;
+            a.download = `Ganadores_${new Date().toISOString().slice(0,10)}.xls`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        }
+
+        async function clearAllData() {
+            if (!confirm('¿Estás seguro de eliminar TODOS los registros de ganadores? Esta acción vaciará la lista por completo.')) return;
+            
+            winners = [];
+            localStorage.removeItem('lafamilia_winners');
+            loadAdminWinnersTable();
+
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('winners').delete().neq('id', 0);
+                } catch (e) {
+                    console.error("Error al limpiar la base de datos de Supabase", e);
+                }
+            }
+            alert('¡Todos los registros han sido borrados con éxito!');
         }
 
         window.onload = function() {
