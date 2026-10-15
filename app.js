@@ -371,13 +371,21 @@ function resetToGameScreen() {
     goToHome();
 }
 
-// 4. GESTIÓN DE WHATSAPP REUTILIZANDO LA MISMA PESTAÑA ('ruleta_whatsapp_window')
+// 4. GESTIÓN DE WHATSAPP: Envío de constancia a los administradores / encargados
 function shareOnWhatsApp() {
-    if (!currentPlayer.phone) return;
-    const cleanPhone = String(currentPlayer.phone).replace(/\D/g, '');
-    const text = `¡Hola ${currentPlayer.name}! 🎊 Participaste en la Ruleta de la Suerte de La Familia (Servicio y Diagnóstico de Salud) y ganaste: *${lastWinnerPrize}* 🎁. ¡Felicidades! Presenta este mensaje para reclamar tu premio.`;
-    const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`;
-    window.open(waUrl, 'ruleta_whatsapp_window');
+    const text = `¡Nuevo Ganador en La Familia! 🎉\nParticipante: *${currentPlayer.name}*\nTeléfono: ${currentPlayer.phone}\nPremio obtenido: *${lastWinnerPrize}*`;
+    
+    // Números específicos de los administradores o encargados (Código de país + número)
+    const numero1 = "59176231131";
+    const numero2 = "59173045617";
+
+    // Abrir WhatsApp para el primer número (reutilizando pestaña fija)
+    window.open(`https://api.whatsapp.com/send?phone=${numero1}&text=${encodeURIComponent(text)}`, 'whatsapp_admin_1');
+    
+    // Abrir WhatsApp para el segundo número con leve retraso para evitar bloqueo de pop-ups (reutilizando pestaña fija)
+    setTimeout(() => {
+        window.open(`https://api.whatsapp.com/send?phone=${numero2}&text=${encodeURIComponent(text)}`, 'whatsapp_admin_2');
+    }, 500);
 }
 
 // ==========================================
