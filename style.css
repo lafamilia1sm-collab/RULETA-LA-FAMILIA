@@ -1,0 +1,46 @@
+body {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at center, #0f2d26 0%, #061511 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.glass-panel {
+    background: rgba(13, 40, 34, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.unity-button {
+    background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    box-shadow: 0 10px 25px rgba(52, 211, 153, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.unity-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(52, 211, 153, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+
+.unity-button:active {
+    transform: translateY(1px);
+}
+
+.gold-badge {
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+}
+
+.clip-path-pointer { 
+    clip-path: polygon(50% 100%, 0 0, 100% 0); 
+}
+
+@keyframes bounceShort { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-8px); } 
+}
+
+.animate-bounce-short { 
+    animation: bounceShort 2s infinite ease-in-out; 
+}
