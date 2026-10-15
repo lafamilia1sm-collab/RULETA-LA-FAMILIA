@@ -371,21 +371,13 @@ function resetToGameScreen() {
     goToHome();
 }
 
-// 4. GESTIÓN DE WHATSAPP: Envío de constancia a los administradores / encargados
+// 4. GESTIÓN DE WHATSAPP: Envío de constancia directa al encargado
 function shareOnWhatsApp() {
     const text = `¡Nuevo Ganador en La Familia! 🎉\nParticipante: *${currentPlayer.name}*\nTeléfono: ${currentPlayer.phone}\nPremio obtenido: *${lastWinnerPrize}*`;
-    
-    // Números específicos de los administradores o encargados (Código de país + número)
-    const numero1 = "59176231131";
-    const numero2 = "59173045617";
+    const numero = "59176231131";
 
-    // Abrir WhatsApp para el primer número (reutilizando pestaña fija)
-    window.open(`https://api.whatsapp.com/send?phone=${numero1}&text=${encodeURIComponent(text)}`, 'whatsapp_admin_1');
-    
-    // Abrir WhatsApp para el segundo número con leve retraso para evitar bloqueo de pop-ups (reutilizando pestaña fija)
-    setTimeout(() => {
-        window.open(`https://api.whatsapp.com/send?phone=${numero2}&text=${encodeURIComponent(text)}`, 'whatsapp_admin_2');
-    }, 500);
+    // Abrir WhatsApp directamente reutilizando siempre la misma ventana
+    window.open(`https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(text)}`, 'whatsapp_admin_window');
 }
 
 // ==========================================
