@@ -3,7 +3,7 @@
 // ==========================================
 const supabaseConfig = {
     url: "https://bqtwdafpyxjrnkrikaqg.supabase.co",
-    key: "sb_publishable_3RdK0YY-Y1X9g4nUTJPGpg_-oGtDqgw"
+    key: "sb_publishable_3Rdk0YY-Y1X9g4nUTJPGpg_-oGtDqgw"
 };
 
 let supabaseClient = null;
