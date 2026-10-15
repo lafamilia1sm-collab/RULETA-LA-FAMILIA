@@ -17,10 +17,16 @@ try {
     console.log("Supabase cliente en modo local / offline:", e);
 }
 
-// Premios por defecto
+// Premios oficiales predeterminados
 let defaultPrizes = [
-    "Consulta Gratis", "20% Descuento", "Limpieza Facial", "Perfume Exclusivo", 
-    "Perfil Lipídico", "Bono Sorpresa", "Glucosa y Presión", "Membresía VIP"
+    "Descuento 10%", 
+    "Descuento 7.5 %", 
+    "Descuento 5%", 
+    "Rebaja Bs. 50", 
+    "Rebaja Bs. 40", 
+    "Rebaja Bs. 30", 
+    "Rebaja Bs. 20", 
+    "Rebaja Bs. 25"
 ];
 
 // Estado global de la aplicación
